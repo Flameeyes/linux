@@ -81,27 +81,48 @@
 #define BUFF_DFL   CHUNK_ALIGN(300*1024)
 #define BUFF_MIN     CHUNK_ALIGN(8*1024)
 
-/*
- * The per-event API header (2 per URB).
+/**
+ * struct min_bin_hdr - The per-event API header (2 per URB).
  *
- * This structure is seen in userland as defined by the documentation.
+ * @id: URB ID, to connect submission to callback (or error).
+ * @type: Event type, as defined in text API.
+ * @xfer_type: Transfer type: Iso (0), Intr (1), Control (2), Bulk (3).
+ * @epnum: Endpoint number and transfer direction.
+ * @devnum: Device address.
+ * @busnum: Bus number.
+ * @ts_sec: Seconds component of the event's timestamp.
+ * @ts_usec: Microseconds component of the event's timestamp.
+ * @len_urb: Length of data, submitted or actual.
+ * @len_cap: Length of data captured.
+ * @s.setup: Setup structure, only present for Control submissions URBs.
+ * @s.iso: Only present for Iso URBs.
+ * @interval: Only present for Interrupt and Iso URBs.
+ * @start_frame: Only present for Iso URBs.
+ * @xfer_flags: Copy of the URB's transfer_flags.
+ * @ndesc: Actual number of Iso descriptors.
+ *
+ * The ``id`` value is normally an in-kernel address of the URB
+ * itself, but should rather be considered an opaque identifier. The
+ * ID is not required to be unique, so it's not sufficient to connect
+ * multiple events for the same URB. Instead, submissions should be
+ * matched with the next callback or error event with the same ID.
  */
 struct mon_bin_hdr {
-	u64 id;			/* URB ID - from submission to callback */
-	char type;	/* Same as in text API; extensible. */
-	u8 xfer_type;	/* ISO, Intr, Control, Bulk */
-	u8 epnum;	/* Endpoint number and transfer direction */
-	u8 devnum;	/* Device address */
-	u16 busnum;	/* Bus number */
+	u64 id;
+	char type;
+	u8 xfer_type;
+	u8 epnum;
+	u8 devnum;
+	u16 busnum;
 	u8 flag_setup;
 	u8 flag_data;
-	s64 ts_sec;		/* ktime_get_real_ts64 */
-	s32 ts_usec;		/* ktime_get_real_ts64 */
+	s64 ts_sec;
+	s32 ts_usec;
 	s32 status;
-	u32 len_urb;	/* Length of data (submitted or actual) */
-	u32 len_cap;	/* Delivered length */
+	u32 len_urb;
+	u32 len_cap;
 	union {
-		u8 setup[SETUP_LEN];	/* Only for Control S-type */
+		u8 setup[SETUP_LEN];
 		struct iso_rec {
 			s32 error_count;
 			s32 numdesc;
@@ -110,7 +131,7 @@ struct mon_bin_hdr {
 	s32 interval;
 	s32 start_frame;
 	u32 xfer_flags;
-	u32 ndesc;	/* Actual number of ISO descriptors */
+	u32 ndesc;
 };
 
 /*
