@@ -88,29 +88,29 @@
  */
 struct mon_bin_hdr {
 	u64 id;			/* URB ID - from submission to callback */
-	unsigned char type;	/* Same as in text API; extensible. */
-	unsigned char xfer_type;	/* ISO, Intr, Control, Bulk */
-	unsigned char epnum;	/* Endpoint number and transfer direction */
-	unsigned char devnum;	/* Device address */
-	unsigned short busnum;	/* Bus number */
-	char flag_setup;
-	char flag_data;
+	char type;	/* Same as in text API; extensible. */
+	u8 xfer_type;	/* ISO, Intr, Control, Bulk */
+	u8 epnum;	/* Endpoint number and transfer direction */
+	u8 devnum;	/* Device address */
+	u16 busnum;	/* Bus number */
+	u8 flag_setup;
+	u8 flag_data;
 	s64 ts_sec;		/* ktime_get_real_ts64 */
 	s32 ts_usec;		/* ktime_get_real_ts64 */
-	int status;
-	unsigned int len_urb;	/* Length of data (submitted or actual) */
-	unsigned int len_cap;	/* Delivered length */
+	s32 status;
+	u32 len_urb;	/* Length of data (submitted or actual) */
+	u32 len_cap;	/* Delivered length */
 	union {
-		unsigned char setup[SETUP_LEN];	/* Only for Control S-type */
+		u8 setup[SETUP_LEN];	/* Only for Control S-type */
 		struct iso_rec {
-			int error_count;
-			int numdesc;
+			s32 error_count;
+			s32 numdesc;
 		} iso;
 	} s;
-	int interval;
-	int start_frame;
-	unsigned int xfer_flags;
-	unsigned int ndesc;	/* Actual number of ISO descriptors */
+	s32 interval;
+	s32 start_frame;
+	u32 xfer_flags;
+	u32 ndesc;	/* Actual number of ISO descriptors */
 };
 
 /*
