@@ -244,9 +244,6 @@
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
-#define REVISION "Revision: 3.20"
-#define VERSION "Id: cdrom.c 3.20 2003/12/17"
-
 #include <linux/atomic.h>
 #include <linux/module.h>
 #include <linux/fs.h>
@@ -559,7 +556,7 @@ int register_cdrom(struct cdrom_device_info *cdi)
 	if (cdo->open == NULL || cdo->release == NULL)
 		return -EINVAL;
 	if (!banner_printed) {
-		pr_info("Uniform CD-ROM driver " REVISION "\n");
+		pr_info("Uniform CD-ROM driver\n");
 		banner_printed = 1;
 		cdrom_sysctl_register();
 	}
@@ -3374,7 +3371,7 @@ static int cdrom_sysctl_info(struct ctl_table *ctl, int write,
 
 	mutex_lock(&cdrom_mutex);
 
-	pos = sprintf(info, "CD-ROM information, " VERSION "\n");
+	pos = sprintf(info, "CD-ROM information\n");
 	
 	if (cdrom_print_info("\ndrive name:\t", 0, info, &pos, CTL_NAME))
 		goto done;
